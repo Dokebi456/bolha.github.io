@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoure as Bolhas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #cce7ff;
+            overflow: hidden;
+        }
+
+        .bolha {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 123, 255, 0.7);
+            border-radius: 50%;
+            animation: flutuar 5s linear infinite;
+            cursor: pointer;
+        }
+
+        @keyframes flutuar {
+            from {
+                transform: translateY(100vh);
+            }
+            to {
+                transform: translateY(-100px);
+            }
+        }
+
+        #pontuacao {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .jumpscare {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .jumpscare img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div id="pontuacao">Pontos: 0</div>
+
+    <div class="jumpscare" id="jumpscare">
+        <img src="vampeta.png" alt="Jumpscare do Vampeta" />
+    </div>
+
+    <script>
+        const pontuacao = document.getElementById('pontuacao');
+        const jumpscare = document.getElementById('jumpscare');
+        let pontos = 0;
+        let jogoAtivo = true;
+
+        function criarBolha() {
+            if (!jogoAtivo) return; // Impede novas bolhas após o jumpscare
+
+            const bolha = document.createElement('div');
+            bolha.classList.add('bolha');
+            bolha.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            bolha.style.animationDuration = Math.random() * 3 + 2 + 's';
+
+            bolha.addEventListener('click', () => {
+                pontos += 1;
+                pontuacao.textContent = `Pontos: ${pontos}`;
+                bolha.remove();
+
+                if (pontos === 10) { // Ativa o jumpscare quando o jogador atinge 10 pontos
+                    jogoAtivo = false;
+                    jumpscare.style.display = 'flex';
+                    clearInterval(intervaloBolhas); // Para a criação de novas bolhas
+                }
+            });
+
+            document.body.appendChild(bolha);
+
+            bolha.addEventListener('animationend', () => {
+                bolha.remove();
+            });
+        }
+
+        const intervaloBolhas = setInterval(criarBolha, 1000);
+    </script>
+</body>
+</html>
